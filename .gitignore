@@ -1,18 +1,17 @@
-# Build and Release Folders
-bin-debug/
-bin-release/
-[Oo]bj/
-[Bb]in/
+# ROS 2 build artifacts
+build/
+install/
+log/
 
-# Other files and folders
-.settings/
+# Python
+*.pyc
+__pycache__/
 
-# Executables
-*.swf
-*.air
-*.ipa
-*.apk
+# Editors
+.vscode/
+.idea/
 
-# Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
-# should NOT be excluded as they contain compiler settings and other important
-# information for Eclipse / Flash Builder.
+# OS
+.DS_Store
+Thumbs.db
+
