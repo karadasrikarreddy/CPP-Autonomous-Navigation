@@ -1,3 +1,10 @@
+/*
+ * Project: ROS 2 Autonomous Delivery Robot
+ * Author: Srikar Reddy
+ * Date: February 2026
+ * Description: [One sentence about what this specific file does]
+ * License: Apache 2.0
+ */
 #include <rclcpp/rclcpp.hpp>
 #include <geometry_msgs/msg/twist.hpp>
 #include <std_msgs/msg/bool.hpp>

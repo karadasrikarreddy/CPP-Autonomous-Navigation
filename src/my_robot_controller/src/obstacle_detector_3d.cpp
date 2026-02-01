@@ -1,3 +1,10 @@
+/*
+ * Project: ROS 2 Autonomous Delivery Robot
+ * Author: Srikar Reddy
+ * Date: February 2026
+ * Description: [One sentence about what this specific file does]
+ * License: Apache 2.0
+ */
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 #include <pcl_conversions/pcl_conversions.h>
