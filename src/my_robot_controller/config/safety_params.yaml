@@ -35,17 +35,17 @@ local_planner:
     # How far ahead on the green line should we aim? (Meters)
     # - Low (0.5): Robot hugs the line tightly but might wobble.
     # - High (1.5): Robot drives smoother lines but cuts corners.
-    lookahead_dist: 0.6
+    lookahead_dist: 1.2
 
     # --- Obstacle Avoidance Force ---
     # How strongly should walls "push" the robot away?
     # - 0.0: Robot ignores obstacles (might hit them if path is bad).
     # - 2.0: Robot aggressively swerves away from walls.
-    obstacle_weight: 0.7
+    obstacle_weight: 0.2     #0.6
 
     # --- Speed Limit ---
     # Maximum linear velocity (m/s).
-    max_speed: 0.5
+    max_speed: 0.4
 
 # --------------------------------------------------------------------
 # 3. A* PLANNER (The "Navigator")
@@ -58,4 +58,4 @@ a_star_planner:
     # - 50: Standard threshold.
     # - 20: Robot treats "risky" areas as walls (safer path).
     # - 90: Robot will plan paths through narrow gaps (aggressive).
-    obstacle_threshold: 70
+    obstacle_threshold: 90

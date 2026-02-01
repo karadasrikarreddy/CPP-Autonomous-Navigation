@@ -88,23 +88,18 @@ private:
 
         if (!latest_scan_.empty()) {
             for (const auto& pt : latest_scan_.points) {
-                // Ignore floor/ceiling and self
-                if (pt.z < 0.05 || pt.z > 1.0) continue;
+                if (pt.z < 0.05 || pt.z > 1.0) continue; // Floor/Ceiling filter
                 
-                double dist = std::hypot(pt.x, pt.y); // Distance relative to robot
+                double dist = std::hypot(pt.x, pt.y);
                 if (dist < 0.4) continue; // Self filter
                 
-                // Only repel if close (within 1.0m)
+                // Repel only if close (within 1.0m)
                 if (dist < 1.0) {
-                    // Force is inversely proportional to distance (closer = stronger push)
                     double force = (1.0 / dist) - (1.0 / 1.0); 
-                    
-                    // Vector points FROM obstacle TO robot (Local Frame)
-                    // We need to rotate this vector to Global Frame to add it to Attractive Force
                     double local_rep_x = -pt.x / dist; 
                     double local_rep_y = -pt.y / dist;
 
-                    // Rotate to Global Frame
+                    // Rotate to Global Frame and add to repulsion accumulator
                     rep_x += (local_rep_x * cos(yaw) - local_rep_y * sin(yaw)) * force;
                     rep_y += (local_rep_x * sin(yaw) + local_rep_y * cos(yaw)) * force;
                 }
@@ -123,20 +118,24 @@ private:
         while (yaw_error < -M_PI) yaw_error += 2.0 * M_PI;
 
         geometry_msgs::msg::Twist cmd;
-        cmd.angular.z = 2.0 * yaw_error;
+        
+        // --- SMOOTHING FIX 1: LOWER GAIN ---
+        // Reduced from 2.0 to 1.0 to stop the "twitching"
+        cmd.angular.z = 1.0 * yaw_error;
 
         double max_speed = this->get_parameter("max_speed").as_double();
         
-        // Slow down if turning or if obstacle force is high
-        if (std::abs(yaw_error) > 0.5) {
-            cmd.linear.x = 0.1;
-        } else {
-            cmd.linear.x = max_speed;
-        }
+        // --- SMOOTHING FIX 2: PROPORTIONAL SPEED ---
+        // Instead of hard if/else brake, we scale speed linearly.
+        // Sharp turn (1.0 rad error) -> Speed drops to ~0.0 (stopped turn)
+        // Straight (0.0 rad error) -> Speed is max
+        double speed_factor = 1.0 - std::abs(yaw_error);
+        if (speed_factor < 0.1) speed_factor = 0.1; // Never stall completely
+        
+        cmd.linear.x = max_speed * speed_factor;
 
         pub_vel_->publish(cmd);
     }
-
     bool get_lookahead_point(double rx, double ry, double dist, double& gx, double& gy) {
         for (; current_goal_index_ < current_path_.poses.size(); current_goal_index_++) {
             gx = current_path_.poses[current_goal_index_].pose.position.x;
